@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NaviWalk.ViewModels"
+             xmlns:models="clr-namespace:NaviWalk.Models"
+             xmlns:views="clr-namespace:NaviWalk.Views"
+             xmlns:icons="clr-namespace:NaviWalk.Helpers"
+             x:Class="NaviWalk.Pages.LibraryPage"
+             x:DataType="vm:LibraryViewModel">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
+
+        <!-- Encabezado -->
+        <Grid ColumnDefinitions="*,Auto" Padding="20,24,10,8">
+            <Label Text="Tu biblioteca" Style="{StaticResource Title1}" />
+            <views:IconButton Grid.Column="1" Data="{x:Static icons:Icons.SignOut}" Command="{Binding SwitchSourceCommand}"
+                              IconColor="{StaticResource TextSecondary}" />
+        </Grid>
+
+        <!-- Selector de categoría (chips) -->
+        <HorizontalStackLayout Grid.Row="1" Spacing="10" Padding="20,4,20,12">
+            <Button Text="Álbumes" Command="{Binding SelectTabCommand}" CommandParameter="{x:Static vm:LibraryTab.Albums}"
+                    Style="{StaticResource SecondaryButton}" HeightRequest="38" FontSize="14" Padding="18,0">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding ShowAlbums}" Value="True">
+                        <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
+                        <Setter Property="TextColor" Value="{StaticResource OnAccent}" />
+                        <Setter Property="BorderColor" Value="{StaticResource Accent}" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            <Button Text="Artistas" Command="{Binding SelectTabCommand}" CommandParameter="{x:Static vm:LibraryTab.Artists}"
+                    Style="{StaticResource SecondaryButton}" HeightRequest="38" FontSize="14" Padding="18,0">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding ShowArtists}" Value="True">
+                        <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
+                        <Setter Property="TextColor" Value="{StaticResource OnAccent}" />
+                        <Setter Property="BorderColor" Value="{StaticResource Accent}" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            <Button Text="Listas" Command="{Binding SelectTabCommand}" CommandParameter="{x:Static vm:LibraryTab.Playlists}"
+                    Style="{StaticResource SecondaryButton}" HeightRequest="38" FontSize="14" Padding="18,0">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding ShowPlaylists}" Value="True">
+                        <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
+                        <Setter Property="TextColor" Value="{StaticResource OnAccent}" />
+                        <Setter Property="BorderColor" Value="{StaticResource Accent}" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+        </HorizontalStackLayout>
+
+        <Label Grid.Row="2" Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}" Style="{StaticResource ErrorText}" Margin="20,0,20,8" />
+
+        <!-- Contenido: un CollectionView por categoría (virtualizado, soporta bibliotecas grandes) -->
+        <RefreshView Grid.Row="3" IsRefreshing="{Binding IsBusy, Mode=OneWay}" Command="{Binding LoadCommand}">
+            <Grid>
+                <!-- Álbumes: grilla de 2 columnas -->
+                <CollectionView ItemsSource="{Binding Albums}" IsVisible="{Binding ShowAlbums}" SelectionMode="None">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical" Span="2" VerticalItemSpacing="18" HorizontalItemSpacing="14" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Album">
+                            <views:AlbumCard Margin="20,0">
+                                <views:AlbumCard.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:LibraryViewModel}}, x:DataType=vm:LibraryViewModel, Path=OpenAlbumCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </views:AlbumCard.GestureRecognizers>
+                            </views:AlbumCard>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Artistas: lista con foto redonda -->
+                <CollectionView ItemsSource="{Binding Artists}" IsVisible="{Binding ShowArtists}" SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Artist">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14" Padding="20,8">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:LibraryViewModel}}, x:DataType=vm:LibraryViewModel, Path=OpenArtistCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+                                <views:CoverView Source="{Binding Cover}" WidthRequest="56" HeightRequest="56" CornerRadius="28" />
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding Name}" Style="{StaticResource RowTitle}" />
+                                    <Label Text="{Binding Subtitle}" Style="{StaticResource Caption}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Listas de reproducción -->
+                <CollectionView ItemsSource="{Binding Playlists}" IsVisible="{Binding ShowPlaylists}" SelectionMode="None">
+                    <CollectionView.EmptyView>
+                        <Label Text="No hay listas de reproducción." Style="{StaticResource Caption}" Margin="20" />
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Playlist">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14" Padding="20,8">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:LibraryViewModel}}, x:DataType=vm:LibraryViewModel, Path=OpenPlaylistCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+                                <views:CoverView Source="{Binding Cover}" WidthRequest="56" HeightRequest="56" CornerRadius="6" />
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding Title}" Style="{StaticResource RowTitle}" />
+                                    <Label Text="{Binding Subtitle}" Style="{StaticResource Caption}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </RefreshView>
+
+        <views:BottomChrome Grid.Row="4" ActiveTab="Library" />
+    </Grid>
+</ContentPage>

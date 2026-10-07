@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NaviWalk.ViewModels"
+             xmlns:views="clr-namespace:NaviWalk.Views"
+             xmlns:icons="clr-namespace:NaviWalk.Helpers"
+             x:Class="NaviWalk.Pages.NowPlayingPage"
+             x:DataType="vm:PlayerViewModel"
+             Shell.PresentationMode="ModalAnimated">
+
+    <!--
+        Reproductor a pantalla completa (se abre desde el mini reproductor).
+        El fondo (Root.Background) es un degradado con el color dominante de la carátula; se asigna
+        desde el code-behind cada vez que cambia la canción.
+    -->
+    <Grid x:Name="Root" RowDefinitions="Auto,*,Auto,Auto,Auto,Auto,Auto" Padding="24,12,24,20" RowSpacing="6">
+
+        <!-- Barra superior: cerrar + "Reproduciendo desde" -->
+        <Grid ColumnDefinitions="Auto,*,48">
+            <views:IconButton Data="{x:Static icons:Icons.ChevronDown}" Command="{Binding CloseCommand}" IconSize="30" Margin="-10,0,0,0" />
+            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                <Label Text="REPRODUCIENDO DESDE" Style="{StaticResource Caption}" FontSize="11" CharacterSpacing="2" HorizontalTextAlignment="Center" />
+                <Label Text="{Binding Playback.CurrentTrack.Album}" FontSize="15" FontAttributes="Bold" MaxLines="1"
+                       LineBreakMode="TailTruncation" HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- Carátula grande -->
+        <views:CoverView Grid.Row="1" Source="{Binding Playback.CurrentTrack.Cover}" IsSquare="True" CornerRadius="14"
+                         VerticalOptions="Center" Margin="0,8" />
+
+        <!-- Estrellas: ocultas por ahora. Para volver a mostrarlas, cambiar IsVisible a "{Binding SupportsRatings}"
+             (solo aparecen en fuentes que las soportan, como Navidrome). -->
+        <views:RatingView Grid.Row="2" Rating="{Binding Playback.CurrentTrack.Rating}" RateCommand="{Binding RateCommand}"
+                          IsVisible="False" />
+
+        <!-- Título + corazón -->
+        <Grid Grid.Row="3" ColumnDefinitions="*,Auto" Margin="0,10,0,0">
+            <Label Text="{Binding Playback.CurrentTrack.Title}" FontSize="26" FontAttributes="Bold" MaxLines="1"
+                   LineBreakMode="TailTruncation" VerticalOptions="Center" />
+            <Grid Grid.Column="1" IsVisible="{Binding SupportsRatings}">
+                <views:IconButton Data="{x:Static icons:Icons.Heart}" Command="{Binding ToggleFavoriteCommand}"
+                                  IsActive="True" IconSize="28" IsVisible="{Binding Playback.CurrentTrack.IsStarred}" />
+                <views:IconButton Data="{x:Static icons:Icons.HeartOutline}" Command="{Binding ToggleFavoriteCommand}"
+                                  IconColor="{StaticResource TextSecondary}" IconSize="28"
+                                  IsVisible="{Binding Playback.CurrentTrack.IsStarred, Converter={StaticResource InvertedBool}}" />
+            </Grid>
+        </Grid>
+
+        <!-- Artista, álbum · año y formato -->
+        <VerticalStackLayout Grid.Row="4" Spacing="3">
+            <Label Text="{Binding Playback.CurrentTrack.Artist}" FontSize="18" MaxLines="1" LineBreakMode="TailTruncation" />
+            <Label Text="{Binding Playback.CurrentTrack.AlbumYear}" Style="{StaticResource Caption}" FontSize="15" />
+            <Label Text="{Binding Playback.ErrorMessage}" IsVisible="{Binding Playback.ErrorMessage, Converter={StaticResource StringNotEmpty}}"
+                   Style="{StaticResource ErrorText}" />
+        </VerticalStackLayout>
+
+        <!-- Progreso (el code-behind sincroniza el Slider; ver NowPlayingPage.xaml.cs) -->
+        <VerticalStackLayout Grid.Row="5" Spacing="0" Margin="0,6,0,0">
+            <views:WavySeekBar x:Name="ProgressSlider" HeightRequest="36" Maximum="1"
+                               IsAnimating="{Binding Playback.IsPlaying}"
+                               DragStarted="OnDragStarted" DragCompleted="OnDragCompleted" />
+            <!-- Tiempos a los lados y chip con el formato de audio en el centro -->
+            <Grid ColumnDefinitions="*,Auto,*">
+                <Label Text="{Binding Playback.PositionText}" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
+                <Border Grid.Column="1" BackgroundColor="#26FFFFFF" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="12,4"
+                        IsVisible="{Binding Playback.CurrentTrack.FormatInfo, Converter={StaticResource StringNotEmpty}}">
+                    <Label Text="{Binding Playback.CurrentTrack.FormatInfo}" FontSize="11" FontAttributes="Bold" />
+                </Border>
+                <Label Grid.Column="2" Text="{Binding Playback.DurationText}" FontAttributes="Bold" FontSize="13"
+                       HorizontalOptions="End" VerticalOptions="Center" />
+            </Grid>
+        </VerticalStackLayout>
+
+        <!-- Controles + fila inferior -->
+        <VerticalStackLayout Grid.Row="6" Spacing="14" Margin="0,6,0,0">
+            <Grid ColumnDefinitions="*,*,*,*,*">
+                <views:IconButton Data="{x:Static icons:Icons.Shuffle}" Command="{Binding ToggleShuffleCommand}"
+                                  IsActive="{Binding Playback.IsShuffleOn}" IconColor="{StaticResource TextPrimary}" />
+                <views:IconButton Grid.Column="1" Data="{x:Static icons:Icons.Previous}" Command="{Binding PreviousCommand}" IconSize="40" />
+
+                <!-- Botón principal: círculo claro como en el diseño de referencia -->
+                <Border Grid.Column="2" BackgroundColor="{StaticResource TextPrimary}" StrokeThickness="0" StrokeShape="RoundRectangle 40"
+                        WidthRequest="80" HeightRequest="80" HorizontalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding TogglePlayPauseCommand}" />
+                    </Border.GestureRecognizers>
+                    <views:IconButton Data="{Binding PlayPauseIcon}" IconSize="40" IconColor="{StaticResource OnAccent}" InputTransparent="True" />
+                </Border>
+
+                <views:IconButton Grid.Column="3" Data="{x:Static icons:Icons.Next}" Command="{Binding NextCommand}" IconSize="40" />
+                <views:IconButton Grid.Column="4" Data="{Binding RepeatIcon}" Command="{Binding CycleRepeatCommand}"
+                                  IsActive="{Binding IsRepeatActive}" IconColor="{StaticResource TextPrimary}" />
+            </Grid>
+
+            <!-- Velocidad, temporizador de apagado y cola -->
+            <Grid ColumnDefinitions="*,*,*" Margin="0,4,0,0">
+                <VerticalStackLayout Spacing="0">
+                    <views:IconButton Data="{x:Static icons:Icons.Speed}" Command="{Binding CycleSpeedCommand}"
+                                      IsActive="{Binding IsSpeedActive}" IconColor="{StaticResource TextSecondary}" />
+                    <Label Text="{Binding SpeedText}" Style="{StaticResource Caption}" FontSize="11" HorizontalTextAlignment="Center" HeightRequest="14" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="1" Spacing="0">
+                    <views:IconButton Data="{x:Static icons:Icons.Moon}" Command="{Binding CycleSleepTimerCommand}"
+                                      IsActive="{Binding Playback.IsSleepTimerActive}" IconColor="{StaticResource TextSecondary}" />
+                    <Label Text="{Binding Playback.SleepTimerText}" Style="{StaticResource Caption}" FontSize="11" HorizontalTextAlignment="Center" HeightRequest="14" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="2" Spacing="0">
+                    <views:IconButton Data="{x:Static icons:Icons.Queue}" Command="{Binding ShowQueueCommand}" IconColor="{StaticResource TextSecondary}" />
+                    <Label Text=" " FontSize="11" HeightRequest="14" />
+                </VerticalStackLayout>
+            </Grid>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

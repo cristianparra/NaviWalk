@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NaviWalk.ViewModels"
+             xmlns:models="clr-namespace:NaviWalk.Models"
+             xmlns:views="clr-namespace:NaviWalk.Views"
+             xmlns:icons="clr-namespace:NaviWalk.Helpers"
+             x:Class="NaviWalk.Pages.CollectionPage"
+             x:DataType="vm:CollectionViewModel">
+
+    <!-- Detalle de álbum o lista de reproducción. La cabecera va dentro del CollectionView para que todo scrollee junto. -->
+    <Grid RowDefinitions="*,Auto">
+        <CollectionView ItemsSource="{Binding Tracks}" SelectionMode="None">
+
+            <CollectionView.Header>
+                <VerticalStackLayout Padding="20,8,20,16" Spacing="14">
+                    <views:IconButton Data="{x:Static icons:Icons.Back}" Command="{Binding BackCommand}" HorizontalOptions="Start" Margin="-10,0,0,0" />
+
+                    <views:CoverView Source="{Binding Collection.Cover}" IsSquare="True" CornerRadius="12"
+                                     WidthRequest="260" HorizontalOptions="Center" />
+
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="{Binding Collection.Title}" Style="{StaticResource Title1}" FontSize="26" MaxLines="2" LineBreakMode="TailTruncation" />
+                        <Label Text="{Binding Collection.Subtitle}" Style="{StaticResource Caption}" FontSize="15" />
+                    </VerticalStackLayout>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <Button Text="Reproducir" Command="{Binding PlayAllCommand}" Style="{StaticResource PrimaryButton}" HeightRequest="48" />
+                        <Button Grid.Column="1" Text="Aleatorio" Command="{Binding ShuffleCommand}" Style="{StaticResource SecondaryButton}" HeightRequest="48" />
+                    </Grid>
+
+                    <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+                    <Label Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}" Style="{StaticResource ErrorText}" />
+                </VerticalStackLayout>
+            </CollectionView.Header>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Track">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14" Padding="20,8">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CollectionViewModel}}, x:DataType=vm:CollectionViewModel, Path=PlayTrackCommand}"
+                                CommandParameter="{Binding .}" />
+                        </Grid.GestureRecognizers>
+                        <views:CoverView Source="{Binding Cover}" WidthRequest="44" HeightRequest="44" CornerRadius="4" />
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="{Binding Title}" Style="{StaticResource RowTitle}" />
+                            <Label Text="{Binding Artist}" Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="{Binding DurationText}" Style="{StaticResource Caption}" VerticalOptions="Center" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <views:BottomChrome Grid.Row="1" ActiveTab="None" />
+    </Grid>
+</ContentPage>

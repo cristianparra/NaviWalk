@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NaviWalk.Views.CoverView">
+    <!-- Carátula cuadrada con esquinas redondeadas. El tamaño lo define quien la usa (WidthRequest/HeightRequest). -->
+    <Border x:Name="Container" BackgroundColor="{StaticResource SurfaceHigh}" StrokeThickness="0">
+        <Grid>
+            <!-- Ícono de respaldo: queda visible cuando no hay carátula (la imagen es transparente encima). -->
+            <Path x:Name="Placeholder" Fill="{StaticResource TextDisabled}" Aspect="Uniform"
+                  HorizontalOptions="Center" VerticalOptions="Center" />
+            <Image x:Name="Picture" Aspect="AspectFill" />
+        </Grid>
+    </Border>
+</ContentView>

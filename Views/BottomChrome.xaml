@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NaviWalk.ViewModels"
+             xmlns:views="clr-namespace:NaviWalk.Views"
+             xmlns:icons="clr-namespace:NaviWalk.Helpers"
+             x:Class="NaviWalk.Views.BottomChrome"
+             x:DataType="vm:PlayerViewModel">
+
+    <!--
+        Parte inferior fija de cada pantalla (estilo Spotify):
+        1) mini reproductor (solo si hay una pista cargada)
+        2) barra de navegación Inicio / Buscar / Biblioteca (solo en las pestañas principales)
+    -->
+    <VerticalStackLayout Spacing="0" BackgroundColor="{StaticResource Background}">
+
+        <!-- Mini reproductor -->
+        <Border IsVisible="{Binding Playback.HasTrack}"
+                Style="{StaticResource Card}"
+                Margin="8,4" Padding="0" BackgroundColor="{StaticResource SurfaceHigh}"
+                StrokeShape="RoundRectangle 12">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding OpenNowPlayingCommand}" />
+            </Border.GestureRecognizers>
+            <Grid RowDefinitions="Auto,3">
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="10" Padding="8,8,4,8">
+                    <views:CoverView Source="{Binding Playback.CurrentTrack.Cover}" WidthRequest="44" HeightRequest="44" CornerRadius="6" />
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                        <Label Text="{Binding Playback.CurrentTrack.Title}" Style="{StaticResource RowTitle}" FontAttributes="Bold" FontSize="15" />
+                        <Label Text="{Binding Playback.CurrentTrack.Artist}" Style="{StaticResource Caption}" />
+                    </VerticalStackLayout>
+                    <views:IconButton Grid.Column="2" Data="{Binding PlayPauseIcon}" Command="{Binding TogglePlayPauseCommand}" IconSize="28" />
+                    <views:IconButton Grid.Column="3" Data="{x:Static icons:Icons.Next}" Command="{Binding NextCommand}" IconSize="28" />
+                </Grid>
+                <!-- Progreso de la pista -->
+                <ProgressBar Grid.Row="1" Progress="{Binding Progress}" ProgressColor="{StaticResource Accent}" BackgroundColor="Transparent" />
+            </Grid>
+        </Border>
+
+        <!-- Barra de navegación principal -->
+        <Grid x:Name="NavBar" ColumnDefinitions="*,*,*" Padding="0,6,0,10" BackgroundColor="{StaticResource Background}">
+            <VerticalStackLayout x:Name="HomeTab" Spacing="2">
+                <Path x:Name="HomeIcon" Aspect="Uniform" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" />
+                <Label x:Name="HomeLabel" Text="Inicio" FontSize="11" HorizontalTextAlignment="Center" />
+                <VerticalStackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnHomeTapped" />
+                </VerticalStackLayout.GestureRecognizers>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout x:Name="SearchTab" Grid.Column="1" Spacing="2">
+                <Path x:Name="SearchIcon" Aspect="Uniform" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" />
+                <Label x:Name="SearchLabel" Text="Buscar" FontSize="11" HorizontalTextAlignment="Center" />
+                <VerticalStackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnSearchTapped" />
+                </VerticalStackLayout.GestureRecognizers>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout x:Name="LibraryTab" Grid.Column="2" Spacing="2">
+                <Path x:Name="LibraryIcon" Aspect="Uniform" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" />
+                <Label x:Name="LibraryLabel" Text="Biblioteca" FontSize="11" HorizontalTextAlignment="Center" />
+                <VerticalStackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnLibraryTapped" />
+                </VerticalStackLayout.GestureRecognizers>
+            </VerticalStackLayout>
+        </Grid>
+    </VerticalStackLayout>
+</ContentView>

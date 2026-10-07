@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NaviWalk.Views.IconButton"
+             Padding="10"
+             HorizontalOptions="Center"
+             VerticalOptions="Center">
+    <!-- Botón de ícono vectorial. El padding amplía el área táctil sin agrandar el ícono. -->
+    <Path x:Name="Glyph" Aspect="Uniform" HorizontalOptions="Center" VerticalOptions="Center" />
+    <ContentView.GestureRecognizers>
+        <TapGestureRecognizer Tapped="OnTapped" />
+    </ContentView.GestureRecognizers>
+</ContentView>

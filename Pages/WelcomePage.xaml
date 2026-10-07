@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NaviWalk.ViewModels"
+             xmlns:views="clr-namespace:NaviWalk.Views"
+             xmlns:icons="clr-namespace:NaviWalk.Helpers"
+             x:Class="NaviWalk.Pages.WelcomePage"
+             x:DataType="vm:WelcomeViewModel">
+
+    <!-- Primera pantalla: el usuario elige la fuente de su música. -->
+    <ScrollView>
+        <VerticalStackLayout Padding="24,48,24,24" Spacing="16">
+
+            <views:IconButton Data="{x:Static icons:Icons.MusicNote}" IconSize="56" IconColor="{StaticResource Accent}"
+                              HorizontalOptions="Start" Padding="0" />
+            <Label Text="NaviWalk" Style="{StaticResource Title1}" />
+            <Label Text="¿Cómo quieres escuchar tu música?" Style="{StaticResource Caption}" FontSize="16" MaxLines="2" Margin="0,0,0,24" />
+
+            <!-- Opción 1: música del dispositivo -->
+            <Border Style="{StaticResource Card}">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding UseLocalCommand}" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                    <Border BackgroundColor="{StaticResource SurfaceHigh}" StrokeThickness="0" StrokeShape="RoundRectangle 28"
+                            WidthRequest="56" HeightRequest="56">
+                        <views:IconButton Data="{x:Static icons:Icons.Phone}" IconColor="{StaticResource Accent}" InputTransparent="True" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                        <Label Text="Música del dispositivo" FontSize="18" FontAttributes="Bold" />
+                        <Label Text="Reproduce los archivos guardados en este teléfono." Style="{StaticResource Caption}" MaxLines="2" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- Opción 2: servidor Navidrome -->
+            <Border Style="{StaticResource Card}">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding UseServerCommand}" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                    <Border BackgroundColor="{StaticResource SurfaceHigh}" StrokeThickness="0" StrokeShape="RoundRectangle 28"
+                            WidthRequest="56" HeightRequest="56">
+                        <views:IconButton Data="{x:Static icons:Icons.Cloud}" IconColor="{StaticResource Accent}" InputTransparent="True" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                        <Label Text="Servidor Navidrome" FontSize="18" FontAttributes="Bold" />
+                        <Label Text="Conéctate a tu biblioteca con dirección, usuario y contraseña." Style="{StaticResource Caption}" MaxLines="2" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="NaviWalk.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pages="clr-namespace:NaviWalk.Pages"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="False"
+    FlyoutBehavior="Disabled"
+    BackgroundColor="{StaticResource Background}">
+
+    <!--
+        Estructura de navegación. No se usa la barra de pestañas nativa de Shell: la barra inferior
+        propia (Views/BottomChrome) permite combinarla con el mini reproductor.
+
+        Rutas de nivel superior (se navega con "//ruta"):
+          startup  -> decide si hay sesión guardada
+          welcome  -> elegir fuente (local o Navidrome)
+          login    -> credenciales de Navidrome
+          home / search / library -> pestañas principales
+
+        Rutas secundarias (collection, artist, nowplaying) se registran en AppShell.xaml.cs.
+    -->
+    <ShellContent Route="startup" ContentTemplate="{DataTemplate pages:StartupPage}" />
+    <ShellContent Route="welcome" ContentTemplate="{DataTemplate pages:WelcomePage}" />
+    <ShellContent Route="login" ContentTemplate="{DataTemplate pages:ServerLoginPage}" />
+    <ShellContent Route="home" ContentTemplate="{DataTemplate pages:HomePage}" />
+    <ShellContent Route="search" ContentTemplate="{DataTemplate pages:SearchPage}" />
+    <ShellContent Route="library" ContentTemplate="{DataTemplate pages:LibraryPage}" />
+</Shell>

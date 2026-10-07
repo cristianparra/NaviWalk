@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NaviWalk.ViewModels"
+             xmlns:models="clr-namespace:NaviWalk.Models"
+             xmlns:views="clr-namespace:NaviWalk.Views"
+             xmlns:icons="clr-namespace:NaviWalk.Helpers"
+             x:Class="NaviWalk.Pages.ArtistPage"
+             x:DataType="vm:ArtistViewModel">
+
+    <!-- Detalle de artista: foto, nombre y grilla de sus álbumes. -->
+    <Grid RowDefinitions="*,Auto">
+        <CollectionView ItemsSource="{Binding Albums}" SelectionMode="None">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="2" VerticalItemSpacing="18" HorizontalItemSpacing="14" />
+            </CollectionView.ItemsLayout>
+
+            <CollectionView.Header>
+                <VerticalStackLayout Padding="20,8,20,16" Spacing="14">
+                    <views:IconButton Data="{x:Static icons:Icons.Back}" Command="{Binding BackCommand}" HorizontalOptions="Start" Margin="-10,0,0,0" />
+                    <views:CoverView Source="{Binding Artist.Cover}" WidthRequest="180" HeightRequest="180" CornerRadius="90" HorizontalOptions="Center" />
+                    <Label Text="{Binding Artist.Name}" Style="{StaticResource Title1}" HorizontalTextAlignment="Center" MaxLines="2" />
+                    <Label Text="Álbumes" Style="{StaticResource SectionTitle}" Margin="0,12,0,0" />
+                    <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+                    <Label Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}" Style="{StaticResource ErrorText}" />
+                </VerticalStackLayout>
+            </CollectionView.Header>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Album">
+                    <views:AlbumCard Margin="20,0">
+                        <views:AlbumCard.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ArtistViewModel}}, x:DataType=vm:ArtistViewModel, Path=OpenAlbumCommand}"
+                                CommandParameter="{Binding .}" />
+                        </views:AlbumCard.GestureRecognizers>
+                    </views:AlbumCard>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <views:BottomChrome Grid.Row="1" ActiveTab="None" />
+    </Grid>
+</ContentPage>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+	<!--
+		allowBackup=false: evita que Android restaure credenciales cifradas sin su clave del Keystore.
+		usesCleartextTraffic=true: permite servidores Navidrome en http dentro de la red local.
+		Si solo usas servidores https, puedes poner false para mayor seguridad.
+	-->
+	<application
+		android:allowBackup="false"
+		android:icon="@mipmap/appicon"
+		android:roundIcon="@mipmap/appicon_round"
+		android:supportsRtl="true"
+		android:usesCleartextTraffic="true"></application>
+
+	<!-- Red: conexión a Navidrome -->
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+	<!-- Música local: Android 13+ usa READ_MEDIA_AUDIO; versiones anteriores, READ_EXTERNAL_STORAGE -->
+	<uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+
+	<!-- Reproducción en segundo plano (servicio en primer plano con notificación) -->
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+	<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+</manifest>

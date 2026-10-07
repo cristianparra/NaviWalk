@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!--
+		NaviWalk: reproductor de música para Android (.NET MAUI).
+		Fuentes soportadas: música local del dispositivo y servidores Navidrome (API Subsonic).
+		Solo se compila para Android: las demás plataformas no se usan.
+	-->
+	<PropertyGroup>
+		<TargetFrameworks>net9.0-android</TargetFrameworks>
+
+		<OutputType>Exe</OutputType>
+		<RootNamespace>NaviWalk</RootNamespace>
+		<UseMaui>true</UseMaui>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+		<!-- Nombre visible de la app -->
+		<ApplicationTitle>NaviWalk</ApplicationTitle>
+
+		<!-- Identificador del paquete (cámbialo antes de publicar en Google Play) -->
+		<ApplicationId>com.parravergara.naviwalk</ApplicationId>
+
+		<!-- Versiones: ApplicationVersion debe aumentar en cada publicación -->
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationVersion>1</ApplicationVersion>
+
+		<!-- Android 8.0 (API 26) o superior -->
+		<SupportedOSPlatformVersion>26.0</SupportedOSPlatformVersion>
+
+		<!-- Compila también los bindings con RelativeSource (más rápido y con errores en tiempo de compilación) -->
+		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- Ícono y pantalla de inicio: fondo gris oscuro con acento naranja -->
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#1A1A1A" />
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#121212" BaseSize="128,128" />
+
+		<MauiImage Include="Resources\Images\*" />
+		<MauiFont Include="Resources\Fonts\*" />
+		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.5" />
+		<!-- MVVM: ObservableObject, [ObservableProperty], [RelayCommand] -->
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+	</ItemGroup>
+
+</Project>

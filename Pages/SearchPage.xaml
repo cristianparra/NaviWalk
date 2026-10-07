@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NaviWalk.ViewModels"
+             xmlns:models="clr-namespace:NaviWalk.Models"
+             xmlns:views="clr-namespace:NaviWalk.Views"
+             xmlns:icons="clr-namespace:NaviWalk.Helpers"
+             x:Class="NaviWalk.Pages.SearchPage"
+             x:DataType="vm:SearchViewModel">
+
+    <ContentPage.Resources>
+        <icons:CountToBoolConverter x:Key="CountToBool" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Campo de búsqueda -->
+        <VerticalStackLayout Padding="20,24,20,8" Spacing="14">
+            <Label Text="Buscar" Style="{StaticResource Title1}" />
+            <Border BackgroundColor="{StaticResource Surface}" StrokeThickness="0" StrokeShape="RoundRectangle 28" Padding="14,0">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                    <views:IconButton Data="{x:Static icons:Icons.Search}" IconSize="22" Padding="0" IconColor="{StaticResource TextSecondary}" InputTransparent="True" />
+                    <Entry Grid.Column="1" Text="{Binding QueryText}" Placeholder="Artistas, álbumes o canciones" ReturnType="Search" />
+                    <ActivityIndicator Grid.Column="2" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" WidthRequest="22" HeightRequest="22" />
+                </Grid>
+            </Border>
+        </VerticalStackLayout>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="0,8,0,16" Spacing="12">
+
+                <Label Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}" Style="{StaticResource ErrorText}" Margin="20,0" />
+                <Label Text="Sin resultados." IsVisible="{Binding ShowNoResults}" Style="{StaticResource Caption}" Margin="20,0" />
+
+                <!-- Artistas -->
+                <Label Text="Artistas" Style="{StaticResource SectionTitle}" Margin="20,8,20,0"
+                       IsVisible="{Binding Artists.Count, Converter={StaticResource CountToBool}}" />
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Artists}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:Artist">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14" Padding="20,6">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, x:DataType=vm:SearchViewModel, Path=OpenArtistCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+                                <views:CoverView Source="{Binding Cover}" WidthRequest="52" HeightRequest="52" CornerRadius="26" />
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding Name}" Style="{StaticResource RowTitle}" />
+                                    <Label Text="Artista" Style="{StaticResource Caption}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <!-- Álbumes -->
+                <Label Text="Álbumes" Style="{StaticResource SectionTitle}" Margin="20,8,20,0"
+                       IsVisible="{Binding Albums.Count, Converter={StaticResource CountToBool}}" />
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Albums}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:Album">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14" Padding="20,6">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, x:DataType=vm:SearchViewModel, Path=OpenAlbumCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+                                <views:CoverView Source="{Binding Cover}" WidthRequest="52" HeightRequest="52" CornerRadius="6" />
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding Title}" Style="{StaticResource RowTitle}" />
+                                    <Label Text="{Binding Subtitle}" Style="{StaticResource Caption}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <!-- Canciones -->
+                <Label Text="Canciones" Style="{StaticResource SectionTitle}" Margin="20,8,20,0"
+                       IsVisible="{Binding Tracks.Count, Converter={StaticResource CountToBool}}" />
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Tracks}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:Track">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14" Padding="20,6">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, x:DataType=vm:SearchViewModel, Path=PlayTrackCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+                                <views:CoverView Source="{Binding Cover}" WidthRequest="52" HeightRequest="52" CornerRadius="6" />
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding Title}" Style="{StaticResource RowTitle}" />
+                                    <Label Text="{Binding Subtitle}" Style="{StaticResource Caption}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <views:BottomChrome Grid.Row="2" ActiveTab="Search" />
+    </Grid>
+</ContentPage>

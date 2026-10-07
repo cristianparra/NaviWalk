@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NaviWalk.ViewModels"
+             xmlns:views="clr-namespace:NaviWalk.Views"
+             xmlns:icons="clr-namespace:NaviWalk.Helpers"
+             x:Class="NaviWalk.Pages.ServerLoginPage"
+             x:DataType="vm:ServerLoginViewModel">
+
+    <!-- Formulario de conexión a Navidrome. Las credenciales se guardan cifradas tras conectar con éxito. -->
+    <ScrollView>
+        <VerticalStackLayout Padding="16,24,24,24" Spacing="16">
+
+            <views:IconButton Data="{x:Static icons:Icons.Back}" Command="{Binding BackCommand}" HorizontalOptions="Start" />
+
+            <VerticalStackLayout Padding="8,0,0,0" Spacing="4">
+                <Label Text="Conectar a Navidrome" Style="{StaticResource Title1}" />
+                <Label Text="Solo tendrás que hacerlo una vez." Style="{StaticResource Caption}" />
+            </VerticalStackLayout>
+
+            <Border Style="{StaticResource Card}" Margin="8,8,0,0">
+                <VerticalStackLayout Spacing="12">
+                    <VerticalStackLayout>
+                        <Label Text="Dirección del servidor" Style="{StaticResource Caption}" />
+                        <Entry Text="{Binding ServerUrl}" Placeholder="192.168.1.10:4533 o https://musica.midominio.com"
+                               Keyboard="Url" ReturnType="Next" />
+                    </VerticalStackLayout>
+                    <BoxView HeightRequest="1" Color="{StaticResource Divider}" />
+                    <VerticalStackLayout>
+                        <Label Text="Usuario" Style="{StaticResource Caption}" />
+                        <Entry Text="{Binding UserName}" Placeholder="usuario" Keyboard="Plain" ReturnType="Next" />
+                    </VerticalStackLayout>
+                    <BoxView HeightRequest="1" Color="{StaticResource Divider}" />
+                    <VerticalStackLayout>
+                        <Label Text="Contraseña" Style="{StaticResource Caption}" />
+                        <Entry Text="{Binding Password}" Placeholder="••••••••" IsPassword="True"
+                               ReturnType="Go" ReturnCommand="{Binding ConnectCommand}" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}" Style="{StaticResource ErrorText}" Margin="8,0,0,0" />
+
+            <Button Text="Conectar" Command="{Binding ConnectCommand}" Style="{StaticResource PrimaryButton}" Margin="8,8,0,0" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
